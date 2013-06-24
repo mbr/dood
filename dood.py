@@ -106,8 +106,20 @@ class Doodle(object):
 
 
 class Option(object):
-    def __init__(self, value, date=None, date_time=None, start=None,
+    def __init__(self, value=None, date=None, date_time=None, start=None,
                    end=None):
+        """Options for a poll
+
+        All options should be passed as naive datetimes because strange
+        things happen if actual timezones are passed. Just don't.
+
+        :param value: The text to show.
+        :param date: A date object, the time in question.
+        :param date_time: A datetime object, instead of ``date``.
+        :param start: Start time, should also pass ``end`` and none of
+                      ``date`` or ``date_time``.
+        :param end: End time, like ``start`` should be a datetime object.
+        """
         self.value = value
         self.date = date
         self.date_time = date_time
@@ -129,6 +141,7 @@ class Option(object):
         if self.end:
             option.set('end', self.end)
 
-        option.text = self.value
+        if self.value:
+            option.text = self.value
 
         return option
