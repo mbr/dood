@@ -62,12 +62,26 @@ class Doodle(object):
 
     def create_poll(self, initiator,
                           title,
+                          initiator_email=None,
                           description=None,
                           location=None,
                           type='TEXT',
                           hidden=False,
                           options=[],
                           ):
+        """Creates a new poll.
+
+        :param initiator: Name of the initiator.
+        :param initiator_email: E-Mail of the initiator. Doodle uses this to
+                                attach a poll to an account.
+        :param description: The description shown.
+        :param location: Optional location. Must be given if description isn't.
+        :param type: One of ``'TEXT'`` or ``'DATE'``.
+        :param hidden: Hide participant names.
+        :param options: An array of strings or ``Option``s. When ``'DATE'`` is
+                        chosen for ``type``, must be ``Option`` with date or
+                        date_time set.
+        """
         assert type in ('TEXT', 'DATE')
         assert location or description
         E = ElementMaker(namespace=self.doodle_ns)
@@ -82,9 +96,11 @@ class Doodle(object):
         if location:
             poll.append(E.location(location))
 
-        poll.append(E.initiator(
-            E.name(initiator))
-        )
+        initiator_elem = E.initiator(E.name(initiator))
+        if initiator_email:
+            initiator_elem.append(E.eMailAddress(initiator_email))
+
+        poll.append(initiator_elem)
 
         opts = E.options()
         for opt in options:
