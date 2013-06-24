@@ -7,6 +7,11 @@ import rauth
 import requests
 import xmltodict
 
+# "sparse" docs at http://www.doodle.com/xsd1/RESTfulDoodle.pdf
+# but hey, i fucking love reading DTDs. http://doodle.com/xsd1/poll.xsd
+# this pretty much explains why there hasn't been a single usable library
+# for the doodle API in 5 years
+
 
 class DoodleException(Exception):
     pass
@@ -83,7 +88,9 @@ class Doodle(object):
 
         opts = E.options()
         for opt in options:
-            opts.append(E.option(opt))
+            if isinstance(opt, basestring):
+                opt = Option(opt)
+            opts.append(opt.to_node())
 
         poll.append(opts)
 
@@ -96,3 +103,32 @@ class Doodle(object):
         r.raise_for_status()
 
         return r.headers['Content-Location'], r.headers['X-DoodleKey']
+
+
+class Option(object):
+    def __init__(self, value, date=None, date_time=None, start=None,
+                   end=None):
+        self.value = value
+        self.date = date
+        self.date_time = date_time
+        self.start = start
+        self.end = end
+
+    def to_node(self):
+        option = etree.Element('option', nsmap={None: Doodle.doodle_ns})
+
+        if self.date:
+            option.set('date', self.date.isoformat())
+
+        if self.date_time:
+            option.set('dateTime', self.date_time.isoformat())
+
+        if self.start:
+            option.set('startDateTime', self.start.isoformat())
+
+        if self.end:
+            option.set('end', self.end)
+
+        option.text = self.value
+
+        return option
