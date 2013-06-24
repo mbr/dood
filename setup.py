@@ -21,12 +21,4 @@ setup(
     license='MIT',
     packages=find_packages(exclude=['test']),
     install_requires=['lxml', 'rauth', 'requests', 'xmltodict'],
-    entry_points={
-        'console_scripts': [
-            'commandname = package:func',
-        ],
-        'gui_scripts': [
-            'commandname = package:func',
-        ]
-    }
 )
