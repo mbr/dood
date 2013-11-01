@@ -20,5 +20,5 @@ setup(
     url='http://github.com/mbr/dood',
     license='MIT',
     packages=find_packages(exclude=['test']),
-    install_requires=['lxml', 'rauth', 'requests', 'xmltodict'],
+    install_requires=['lxml', 'rauth', 'xmltodict'],
 )
