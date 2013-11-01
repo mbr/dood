@@ -4,7 +4,6 @@
 from lxml import etree
 from lxml.builder import ElementMaker
 import rauth
-import requests
 import xmltodict
 
 # "sparse" docs at http://www.doodle.com/xsd1/RESTfulDoodle.pdf
