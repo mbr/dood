@@ -34,9 +34,9 @@ class Doodle(object):
 
     @property
     def session(self):
-      if not getattr(self, '_session', None):
-        self._new_access_token()
-      return self._session
+        if not getattr(self, '_session', None):
+            self._new_access_token()
+        return self._session
 
     def _new_access_token(self):
         request = self.service.get_request_token()
@@ -59,15 +59,16 @@ class Doodle(object):
 
         return xmltodict.parse(r.content)['poll']
 
-    def create_poll(self, initiator,
-                          title,
-                          initiator_email=None,
-                          description=None,
-                          location=None,
-                          type='TEXT',
-                          hidden=False,
-                          options=[],
-                          ):
+    def create_poll(self,
+                    initiator,
+                    title,
+                    initiator_email=None,
+                    description=None,
+                    location=None,
+                    type='TEXT',
+                    hidden=False,
+                    options=[],
+                    ):
         """Creates a new poll.
 
         :param initiator: Name of the initiator.
@@ -122,7 +123,7 @@ class Doodle(object):
 
 class Option(object):
     def __init__(self, value=None, date=None, date_time=None, start=None,
-                   end=None):
+                 end=None):
         """Options for a poll
 
         All options should be passed as naive datetimes because strange
