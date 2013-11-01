@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
 from lxml import etree
 from lxml.builder import ElementMaker
 import rauth
@@ -10,6 +11,42 @@ import xmltodict
 # but hey, i fucking love reading DTDs. http://doodle.com/xsd1/poll.xsd
 # this pretty much explains why there hasn't been a single usable library
 # for the doodle API in 5 years
+
+
+class Poll(object):
+    @classmethod
+    def from_xmldict(cls, d):
+        poll = cls()
+        poll.participants = OrderedDict()
+        for dpar in d['participants']['participant']:
+            par = Participant.from_xmldict(dpar)
+            poll.participants[par.id] = par
+
+        return poll
+
+    def get_option_sum(self, opt_index):
+        return sum(par.options[opt_index]
+                   for par in self.participants.values())
+
+    def filter_by_option(self, opt_index, value=True):
+        for par in self.participants.values():
+            if par.options[opt_index] == value:
+                yield par
+
+
+class Participant(object):
+    @classmethod
+    def from_xmldict(cls, d):
+        par = cls()
+        par.id = int(d['id'])
+        par.name = d['name']
+        par.user_id = d['userId']
+        par.options = map(int, d['preferences']['option'])
+        return par
+
+    def __str__(self):
+        return (u'[%(name)s <%(user_id)s>(#%(id)d): %(options)r]' %
+                self.__dict__)
 
 
 class DoodleException(Exception):
@@ -57,7 +94,9 @@ class Doodle(object):
                              headers=headers)
         r.raise_for_status()
 
-        return xmltodict.parse(r.content)['poll']
+        return Poll.from_xmldict(
+            xmltodict.parse(r.text)['poll']
+        )
 
     def create_poll(self,
                     initiator,
