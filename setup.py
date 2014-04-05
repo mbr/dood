@@ -12,7 +12,7 @@ def read(fname):
 
 setup(
     name='dood',
-    version='0.1.3.dev2',
+    version='0.1.2dev',
     description='A simplified API for creating polls on doodle.com.',
     long_description=read('README.rst'),
     author='Marc Brinkmann',
